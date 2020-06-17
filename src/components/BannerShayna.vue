@@ -70,6 +70,8 @@ export default {
       this.cartUser.push(productStored);
       const parsed = JSON.stringify(this.cartUser);
       localStorage.setItem("cartUser", parsed);
+
+      window.location.reload();
     }
   },
   mounted() {

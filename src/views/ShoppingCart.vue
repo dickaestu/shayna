@@ -44,7 +44,7 @@
                           <h5>{{ cart.name }}</h5>
                         </td>
                         <td class="p-price first-row">Rp. {{cart.price}}</td>
-                        <td @click="removeItem(cartUser.index)" class="delete-item">
+                        <td @click="removeItem(cart.id)" class="delete-item">
                           <a href="#">
                             <i class="material-icons">close</i>
                           </a>
@@ -173,10 +173,21 @@ export default {
     };
   },
   methods: {
-    removeItem(index) {
+    removeItem(idx) {
+      // cari tahu id dari si item yang akan di hapus
+      let cartUserStorage = JSON.parse(localStorage.getItem("cartUser"));
+      let itemCartUserStorage = cartUserStorage.map(
+        itemCartUserStorage => itemCartUserStorage.id
+      );
+
+      // cocokan idx item dengan id yang ada di storage
+      let index = itemCartUserStorage.findIndex(id => id == idx);
       this.cartUser.splice(index, 1);
+
+      // untuk reload halaman atau refresh dan di update datanya
       const parsed = JSON.stringify(this.cartUser);
       localStorage.setItem("cartUser", parsed);
+      window.location.reload();
     },
     // mengirim data ke API
     checkout() {

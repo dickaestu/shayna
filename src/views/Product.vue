@@ -55,12 +55,16 @@
                     <h3>{{ productDetails.name }}</h3>
                   </div>
                   <div class="pd-desc">
-                    <p>{{ productDetails.description }}</p>
+                    <p v-html="productDetails.description"></p>
                     <h4>Rp. {{ productDetails.price }}</h4>
                   </div>
                   <div class="quantity">
                     <router-link to="/cart">
-                      <a href class="primary-btn pd-cart">Add To Cart</a>
+                      <a
+                        @click="saveCart(productDetails.id, productDetails.name, productDetails.price, productDetails.galleries[0].photo)"
+                        href="#"
+                        class="primary-btn pd-cart"
+                      >Add To Cart</a>
                     </router-link>
                   </div>
                 </div>
@@ -96,8 +100,8 @@ export default {
   data() {
     return {
       photo_default: "",
-      thumbs: [],
-      productDetails: []
+      productDetails: [],
+      cartUser: []
     };
   },
 
@@ -110,10 +114,30 @@ export default {
       this.productDetails = data;
       // replace value gambar default dengan data dari api
       this.photo_default = data.galleries[0].photo;
+    },
+    saveCart(idProduct, nameProduct, priceProduct, photoProduct) {
+      var productStored = {
+        id: idProduct,
+        name: nameProduct,
+        price: priceProduct,
+        photo: photoProduct
+      };
+
+      this.cartUser.push(productStored);
+      const parsed = JSON.stringify(this.cartUser);
+      localStorage.setItem("cartUser", parsed);
     }
   },
 
   mounted() {
+    if (localStorage.getItem("cartUser")) {
+      try {
+        this.cartUser = JSON.parse(localStorage.getItem("cartUser"));
+      } catch (e) {
+        localStorage.removeItem("cartUser");
+      }
+    }
+
     axios
       .get("http://backend-shayna.dickaestu.my.id/api/products", {
         params: {
